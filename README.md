@@ -14,7 +14,7 @@ An executable (./ala) will take an argument to where that file with a (.ala) is 
 There are two main portions of a .ala file. The Struct section of the progam is for build the standard folder tree structure within you linux enviorment. The main section is for code that will transform your struct system to produce a final enviroment that will be made in your system. 
 
 ## Troubleshooting and Support
-Create an [Issue].   
+Create an [Issue](https://github.com/SageJames/ALA/issues).   
 Make the issue like this:
 * Issue title
 * Description of issue
