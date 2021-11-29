@@ -1,2 +1,4 @@
-[Root: /Users/alcinderlewis/Desktop/ALA/Out : Ov: N] -> [Folder: String: Var String: Protocal(PName)] -> [File: String: Var String]
+[Root: string : Ov: n] -> [Folder: string: Var string: Protocal(pName)] -> [Folder: string2 : Var string2: Protocal(pName)] -> [File: stringf: Var stringf]
+
+[Folder: string2: Var string2: Protocal(pName)] -> [Folder: this: Var this: Protocal(pName)] -> [Folder: that: Var that: Protocal(pName)] 
 

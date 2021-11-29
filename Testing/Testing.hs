@@ -62,6 +62,10 @@ type Element = (Vars,(Pname, (Name,[Child])))
 data Blocks = RootBlock Root Element | Folder Element | File Child | Forward | BlockError [Tokens]
             deriving (Show, Eq)
 
+-- Ftree
+data Ftree a = Empty | FolderTree (Ftree a) (Ftree a)| Node (Ftree a) (Ftree a)| FileTree a | Root String
+               deriving Show
+
 -- Tokens Datatype
 data Tokens = Sym String | Lbar | Rbar | Colon | RootT | ProtocolT | ForwardT
                 | Lpar | Rpar | FolderT | FileT 
@@ -96,7 +100,8 @@ data Tokens = Sym String | Lbar | Rbar | Colon | RootT | ProtocolT | ForwardT
             Takes the FTree and makes that tree into a File strucutre at the location of the root.
 -}
 
--- lexer
+-- lexer [Checked]
+-- Issues to deal with Hard String in ROOT
 lexer:: String -> [Tokens]
 lexer "" = []
 lexer ('(' : ts) = Lpar : lexer ts
@@ -128,7 +133,7 @@ makeBlocks (Lbar: FileT :Colon: Sym a:Colon: VarT: Sym b: Rbar: ts) = File (a, b
 makeBlocks (ForwardT: ts) = Forward : makeBlocks ts
 makeBlocks s = [BlockError s]
 
--- determineRoot
+-- determineRoot [Tested]
 determineRoot:: [Blocks] -> Blocks
 determineRoot [] = error "There is no root within this structure."
 determineRoot (Forward: RootBlock x xs: ts) = error "The root is not the first element in this list"
@@ -138,44 +143,49 @@ determineRoot (RootBlock x xs: ts) =  moreThanOne (RootBlock x xs) ts
                                             moreThanOne f (x:xs) = moreThanOne f xs 
 determineRoot (x:xs) = determineRoot xs
 
-
--- populateChildren
+-- populateChildren [Tested]
 populateChildren::[Blocks] -> [Blocks] -> [Blocks] -> [Blocks]
 populateChildren [] ts tf = tf
 populateChildren (Folder x :xs) ts tf = if (notElem (Folder x) ts) then populateChildren xs (Folder x :ts) (Folder (findPointF x xs): tf) else populateChildren xs ts tf
 populateChildren (RootBlock r x : xs) ts tf = populateChildren xs ts (RootBlock r (getChildren x xs): tf)
+populateChildren (File x :xs) ts tf = populateChildren xs (File x:ts) (File x:tf)
 populateChildren (x:xs) ts tf = populateChildren xs ts tf
 
---findPointF
+--findPointF [Tested]
 findPointF:: Element -> [Blocks] -> Element
 findPointF d [] = d
 findPointF d (x:xs) = if (Folder d) == x then getChildren d xs else findPointF d xs
 
-
--- getChildren
+-- getChildren [Tested]
 getChildren:: Element -> [Blocks] -> Element 
 getChildren f (Forward: File x :ts) = getChildren (modElem f (File x)) ts
 getChildren f (Forward: Folder x :ts) = getChildren (modElem f (Folder x)) ts
 getChildren f s = f
 
--- modElem
+-- modElem [Tested]
 modElem:: Element -> Blocks -> Element
 modElem f (File x) = ((fst f),((fst $ snd f), ((fst $ snd $ snd f), (x:(snd $ snd $ snd f)))))
 modElem f (Folder x) = ((fst f),((fst $ snd f), ((fst $ snd $ snd f), ((fst $ snd $ snd x, fst x ):(snd $ snd $ snd f)))))
 modElem f _ = error "The block is not able to be a child"
 
--- getAllFiles
+-- getAllFiles [Tested]
 getAllFiles:: [Blocks] -> [Blocks]
 getAllFiles [] = []
 getAllFiles (File x : xs) =  File x : getAllFiles xs
 getAllFiles (x:xs) = getAllFiles xs
 
--- getAllFolders
+-- getAllFolders [Tested]
 getAllFolders:: [Blocks] -> [Blocks]
 getAllFolders [] = []
 getAllFolders (Folder x : xs) =  Folder x : getAllFolders xs
 getAllFolders (x:xs) = getAllFolders xs
 
+
+-- makeTree
+-- makeTree:: [Blocks] -> Ftree
+
+
+-- 
 
 
 --make sure to have files be added to the childpop folder
@@ -186,3 +196,16 @@ getAllFolders (x:xs) = getAllFolders xs
         This is where all the functions and enviromental element are pulled together to make a files input into a
         file structure.
 -}
+
+-- main :: IO ()
+-- main = do
+--     putStrLn "File name:"
+--     file <- getLine
+--     input <- readFile file
+--     let single = unwords (lines input)
+--     let tokened = lexer single
+--     let blockArray = makeBlocks tokened
+--     let populatedArray = populateChildren blockArray [] []
+--     let allFiles = getAllFiles blockArray
+--     let allFolders = getAllFolders blockArray
+--     putStrLn (show populatedArray)

@@ -167,11 +167,11 @@ lexer s = [Err s]
 {-
 
 -}
--- main :: IO ()
--- main = do
---     putStrLn "File name:"
---     file <- getLine
---     input <- readFile file
---     -- let single = unwords (lines input)
---     -- let result = exec (parser (lexer single)) []
---     -- putStrLn (show result)
+main :: IO ()
+main = do
+    putStrLn "File name:"
+    file <- getLine
+    input <- readFile file
+    -- let single = unwords (lines input)
+    -- let result = exec (parser (lexer single)) []
+    -- putStrLn (show result)
