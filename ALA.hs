@@ -15,28 +15,29 @@
 ----[Enviroment Section]-----------------------------------------------------------------------------
 {- 
     Description:
-        This section holds all of factors that contribute the other two follwing section being sucessful.
-        Everything that is needed by the other two section is made and maintainted here.
+        This section holds all of the factors that contribute to the other two following sections being successful. 
+        Everything that is needed by the other two sections is made and maintained here.
 
-    Subsections:
-        Module Declaration:
-            This is to call the module as main.
-        Imports:
-            This is where all of the import are located.
-        Root Protion:
-            This is were all of the root elements are located (String of the root and if there can be a overwrite).
-        Protocal Protion:
-            The element that make up a individual Protocal (Name, Priory, Passing calls, and a compact individual instance).
-        Block Protion:
-            All of the types that my us the differnet types of blocks (Name and Var to Child and Elements).
-        Filepath:
-            A pathway and blocks tuple.
-        Blocks Datatype:
-            All of the data types that a block can be.
-        Tokens Datatype: 
-            All of the token that can come from lexing.
-        WriteString:
-            Takes a Stack and a empty string and makes a Filpath string.
+   	Subsections:
+       		Module Declaration:
+           		This is to call the module as main.
+       		Imports:
+           		This is where all of the imports are located.
+       		Root Portion:
+                This is where all of the root elements are located 
+                (String of the root and if there can be an overwrite).
+            Protocol Portion:
+                The elements that make up an individual Protocol 
+                (Name, Priority, Passing calls, and a compact individual instance).
+            Block Portion:
+                All of the types that are used for the different types of blocks 
+                (Name, Var, Child, and Elements).
+       		Filepath:
+           		All pathway and block tuples.
+       		Blocks Datatype:
+         		All of the data types that a block can be.
+       		Tokens Datatype:
+           		All of the tokens that can come from lexing.
 -}
 
 -- Module Declaration
@@ -80,51 +81,60 @@ data Tokens = Sym String | Lbar | Rbar | Colon | RootT | ProtocolT | ForwardT
 ----[Functions Section]------------------------------------------------------------------------------
 {-
     Description:
-        This section houses all of the fuctions that contribute to the main convertion of the strings to all the 
-        data structures that are used within this project. 
+        This section houses all of the functions that contribute to 
+        the main conversion of the strings to all the data structures 
+        that are used within this project.
 
     Subsection:
-        Lexer: 
-            This function convert a string to an array of tokens.
-        MakeBlocks:
-            Converts an array of token into an array of blocks and forwards. [Block] Forward (->).
-        FindAll (Folder Oriented):
-            Takes a block, array of blocks, and return an array of all the instances. (Big helper method)
-        DetermineRoot:
-            Looks for the single instance of Root (Uses FindAll) and set it to the Root term for the entire program.
-        populateChildren:
-            Populates the child array of each element and make only a single instance of that particular block (Uses FindAll).
-            This should still be array of blocks and not more forwards.
-        GetChildren:
-           Mutates a block with all of its children.
-        ModElement:
-            Add a single child to a element
-        FindPointF (Folder Oriented):
-            Find a single instance folder and add it to a element.
-        GetallFolder:
-            Gather all folder instances in an array.
-        GetallFiles:
-            Gathers all files instance in an array.
-        Endpoints:
-            Finds all of the empty folders and files.
-        StringPathAll:
-            Go through all endpoints to make array of Filepaths.
-        StringPath:
-            Build a Filepaths from a single block.
-        StringPathBlocks:
-            Takes a child block, root array of block, and a stack of blocks. add all the elements until root is found.
-        FindParent:
-            Gets the parent of a particular block.
-        CompareBlock:
-            Compares the particular Block to another.
-        GetChildrenArr:
-            Get Child array of any block with an element.
-        GetChildIns:
-            Convert a Block to a child instance.
-        GetVar:
-            Get variable instance of a block.
-        GetName:
-            Get name instance of a block.     
+       		Lexer:
+           		This function converts a string to an array of tokens.
+       		MakeBlocks:
+                Converts an array of tokens into an array of blocks and forwards. 
+                ([Block] Forward (->)).
+       		FindAll (Folder Oriented):
+                Take a block, array of blocks, and return an array of all the instances. 
+                (Big helper method)
+       		DetermineRoot:
+                Look for the single instance of Root (Uses FindAll) 
+                and set it to the Root term for the entire program.
+      		PopulateChildren:
+                Populates the child array of each element and makes 
+                only a single instance of that particular block 
+                (Uses FindAll).
+           		This should still be an array of blocks and not more forwards.
+       		GetChildren:
+          		Mutates a block with all of its children.
+       		ModElement:
+           		Add a single child to a element
+       		FindPointF (Folder Oriented):
+           		Find a single instance folder and add it to an element.
+       		GetallFolder:
+           		Gather all folder instances in an array.
+      		GetallFiles:
+           		Gather all file instances in an array.
+       		Endpoints:
+           		Finds all of the empty folders and files.
+       		StringPathAll:
+           		Go through all endpoints to make an array of Filepaths.
+       		StringPath:
+           		Build a Filepaths from a single block.
+      		StringPathBlocks:
+                Takes a Child block, root array of Blocks, a stack of Blocks, 
+                and adds all the elements to a stack until the root is found.
+       		FindParent:
+           		Gets the parent of a particular block.
+       		CompareBlock:
+           		Compare a particular Block to another.
+       		GetChildrenArr:
+           		Get a Child array of any Block with an element.
+       		GetChildIns:
+           		Convert a Block to a Child instance.
+       		GetVar:
+           		Get the variable instance of a Block.
+       		GetName:
+           		Get the name instance of a Block.
+       		WriteString:
+                Takes a Stack and an empty string and makes a Filepath instance.
 -}
 
 -- lexer 
@@ -267,22 +277,22 @@ getName (Folder el) = fst $ snd $ snd el
 ----[Main Section]-----------------------------------------------------------------------------------
 {-
     Description:
-        This is where all the functions and enviromental element are pulled together to make a files input into a
-        file structure.
+        This is where all the functions and environmental elements 
+        are pulled together to make a file input into a file structure.
 
-    Subsection:
-        Main:
-            The primary operation and organization of the function.
-        PathsToStruc:
-            Goes through all of filepath to make the files. 
-        CreateMe:
-            Determine what type of create to invoke.
-        IsFile:
-            Determines if a block is a file or not.
-        MakeFile:
-            Creates a file.
-        makeFolder
-            Creates a folder.
+   	Subsection:
+       		Main:
+           		The primary operation and organization of the functions.
+       		PathsToStruc:
+           		Goes through all of filepath to make the files.
+       		CreateMe:
+          		 Determine what type of make function to invoke.
+       		IsFile:
+           		Determines if a block is a file or not (helper).
+       		MakeFile:
+           		Creates a file.
+       		makeFolder
+           		Creates a folder.
 -}
 
 -- main 
