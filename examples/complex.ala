@@ -1,0 +1,9 @@
+[Root: "/Users/alcinderlewis/Desktop/ALA/Out" : Ov: "n"] -> [Folder: "F1string": Var "string": Protocal("pName")] -> [Folder: "F2string" : Var "string2": Protocal("pName")]-> [Folder: "F3string" : Var "string3": Protocal("pName")] -> [File: "F4string": Var "string4"]
+
+[Folder: "F2string": Var "string2": Protocal("pName")] -> [Folder: "this": Var "this": Protocal("pName")] -> [Folder: "that": Var "that": Protocal("pName")] -> [Folder: "more": Var "more": Protocal("pName")] -> [Folder: "waymore": Var "waymore": Protocal("pName")] -> [Folder: "altmore": Var "altmore": Protocal("pName")] -> [Folder: "fugmore": Var "fugmore": Protocal("pName")] -> [Folder: "wemore": Var "wemore": Protocal("pName")] -> [Folder: "fuuumore": Var "fuuumore": Protocal("pName")] -> [Folder: "aleemore": Var "aleemore": Protocal("pName")] ->[Folder: "okay": Var "okay": Protocal("pName")]
+
+[Folder: "F1string": Var "string": Protocal("pName")] -> [Folder: "wow": Var "wow": Protocal("pName")] -> [Folder: "nah": Var "nah": Protocal("pName")] -> 
+
+[Folder: "testing": Var "testing": Protocal("pName")]
+
+[Folder: "this": Var "this": Protocal("pName")] -> [Folder: "can": Var "can": Protocal("pName")]

@@ -1,4 +1,6 @@
-[Root: string : Ov: n] -> [Folder: string: Var string: Protocal(pName)] -> [Folder: string2 : Var string2: Protocal(pName)] -> [File: stringf: Var stringf]
+[Root: "/Users/alcinderlewis/Desktop/ALA/Out" : Ov: "n"] -> [Folder: "F1string": Var "string": Protocal("pName")] -> [Folder: "F2string" : Var "string2": Protocal("pName")] -> [File: "F3string": Var "stringf"]
 
-[Folder: string2: Var string2: Protocal(pName)] -> [Folder: this: Var this: Protocal(pName)] -> [Folder: that: Var that: Protocal(pName)] 
+[Folder: "F2string": Var "string2": Protocal("pName")] -> [Folder: "this": Var "this": Protocal("pName")] -> [Folder: "that": Var "that": Protocal("pName")] 
+
+[Folder: "this": Var "this": Protocal("pName")] -> [Folder: "can": Var "can": Protocal("pName")]
 

@@ -202,7 +202,7 @@ stringPathAll (x:xs) rb = stringPath x rb : stringPathAll xs rb
 stringPath :: Blocks -> [Blocks] -> Filepath
 stringPath b rb = ((writeString ((stringPathBlocks b rb []) ++ [b]) ""),b)
 
--- Takes a Stack and a empty string and makes a Filpath Strig [Okay I think]
+-- Takes a Stack and a empty string and makes a Filpath string [Okay I think]
 writeString:: [Blocks] -> String -> String
 writeString [] s = s
 writeString (RootBlock r el:xs) s = writeString xs r
@@ -242,7 +242,6 @@ getName (RootBlock r el) = r
 getName (File x) = fst x
 getName (Folder el) = fst $ snd $ snd el
 
--- Validate
 
 
 -- make sure to have files be added to the childpop folder
@@ -267,7 +266,6 @@ main = do
     let allFolders = getAllFolders blockArray
     let endpointArray = endpoints populatedArray
     let filePaths = stringPathAll endpointArray populatedArray
-    --putStrLn $ show filePaths
     pathsToStruc filePaths 
 
 --keep len to len-1 and n at 0
@@ -296,15 +294,3 @@ makeFolder:: String -> IO()
 makeFolder x = do
     createDirectoryIfMissing True $ takeDirectory x
     createDirectory x
-
--- main :: IO ()
--- main = do
---     putStrLn "File name:"
---     file <- getLine
---     input <- readFile file
---     putStrLn $ show $ determineRoot $ makeBlocks $lexer $ unwords $ lines input
-
-
-
-
---- TODO: Covert the Array of Strings to a tuple wiht (String, Block)
