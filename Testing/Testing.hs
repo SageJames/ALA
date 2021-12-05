@@ -36,15 +36,20 @@
 -}
 
 -- Module Declaration
--- module Main where
+module Main where
 
 -- Imports
 import Data.Char
 import System.IO 
+import System.Directory
+import System.FilePath.Posix
 
 -- Root Protion
 type Root = String
 type Overwrite = String
+
+-- Filepath
+type Filepath = (String, Blocks)
 
 -- Protocal Protion
 type Pname = String  
@@ -63,8 +68,9 @@ data Blocks = RootBlock Root Element | Folder Element | File Child | Forward | B
             deriving (Show, Eq)
 
 -- Ftree
-data Ftree a = Empty | FolderTree (Ftree a) (Ftree a)| Node (Ftree a) (Ftree a)| FileTree a | Root String
-               deriving Show
+
+-- data Ftree a = Empty | FolderTree (Ftree a) (Ftree a)| Node (Ftree a) (Ftree a)| FileTree a | Root String
+--                deriving Show
 
 -- Tokens Datatype
 data Tokens = Sym String | Lbar | Rbar | Colon | RootT | ProtocolT | ForwardT
@@ -117,12 +123,10 @@ lexer ('F': 'o': 'l': 'd': 'e': 'r': ts) = FolderT : lexer ts
 lexer ('V':'a' : 'r' : ts) = VarT: lexer ts
 lexer ('O':'v': ts) = OvT: lexer ts
 lexer (' ': ts) = lexer ts
-lexer (x:xs) | (isLower x) = scanSym [x] xs
-                             where  scanSym i "" = [Sym (i)] 
-                                    scanSym i (x:xs) | isAlphaNum x = scanSym (i ++ [x]) xs
-                                                     | otherwise = Sym (i) : lexer (x:xs)
+lexer ('\"': ts) = analysisStr "\"" ts
+                   where analysisStr t (x:xs) | x == '\"' =  Sym (tail t): lexer xs 
+                                           | otherwise = analysisStr (t ++ [x]) xs
 lexer s = [Err s]
-
 
 -- makeBlocks
 makeBlocks:: [Tokens] -> [Blocks]
@@ -181,14 +185,67 @@ getAllFolders (Folder x : xs) =  Folder x : getAllFolders xs
 getAllFolders (x:xs) = getAllFolders xs
 
 
--- makeTree
--- makeTree:: [Blocks] -> Ftree
+-- Determines all of the endpoint in the array [Tested]
+endpoints::[Blocks] -> [Blocks]
+endpoints [] = []
+endpoints (File x: ts) = File x : endpoints ts
+endpoints (RootBlock r el:ts) = if (length $ snd$ snd$snd el) == 0 then [RootBlock r el] else endpoints ts
+endpoints (Folder el:ts) = if (length $ snd$ snd$snd el) == 0 then Folder el: endpoints ts else endpoints ts 
 
 
--- 
+-- Go through all endpoints to make array of Filepaths
+stringPathAll::[Blocks] -> [Blocks] -> [Filepath]
+stringPathAll [] rb = []
+stringPathAll (x:xs) rb = stringPath x rb : stringPathAll xs rb 
+
+-- Build a Filepaths from a single block [Start here]
+stringPath :: Blocks -> [Blocks] -> Filepath
+stringPath b rb = ((writeString ((stringPathBlocks b rb []) ++ [b]) ""),b)
+
+-- Takes a Stack and a empty string and makes a Filpath Strig [Okay I think]
+writeString:: [Blocks] -> String -> String
+writeString [] s = s
+writeString (RootBlock r el:xs) s = writeString xs r
+writeString (Folder el: xs) s = writeString xs (s ++"/"++ (getName (Folder el)))
+writeString (File x : xs) s = writeString xs (s ++"/"++ (getName (File x)))
+
+-- Takes a child block, root array of block, and a stack of blocks. add all the elements until root is found 
+stringPathBlocks:: Blocks -> [Blocks] ->[Blocks] -> [Blocks]
+stringPathBlocks b rb st = if (determineRoot rb) == (findParent b rb) then (findParent b rb):st else stringPathBlocks (findParent b rb) rb ( (findParent b rb) : st )
+
+-- Gets the parent of a particular block
+findParent:: Blocks -> [Blocks] -> Blocks
+findParent b [] = error "Could not find block in root blocks"
+findParent b (File x:ts) =  findParent b ts 
+findParent b (Folder el:ts) = if compareBlock b el then Folder el else findParent b ts
+findParent b (RootBlock r el:ts) = if compareBlock b el then RootBlock r el else findParent b ts
+
+-- Compares the particular Block to andother
+compareBlock:: Blocks -> Element -> Bool
+compareBlock b el = if elem (getChildIns b) (getChildrenArr el) then True else False
+
+--- general helper
+getChildrenArr:: Element -> [Child]
+getChildrenArr el = snd $ snd $ snd el
+
+getChildIns:: Blocks -> Child
+getChildIns (File x) = x
+getChildIns b = (getName b, getVar b)
+
+getVar:: Blocks -> Vars
+getVar (File x) = snd x
+getVar (RootBlock r el) = fst el
+getVar (Folder el) = fst el 
+
+getName:: Blocks -> String
+getName (RootBlock r el) = r 
+getName (File x) = fst x
+getName (Folder el) = fst $ snd $ snd el
+
+-- Validate
 
 
---make sure to have files be added to the childpop folder
+-- make sure to have files be added to the childpop folder
 
 ----[Main Section]-----------------------------------------------------------------------------------
 {-
@@ -197,15 +254,57 @@ getAllFolders (x:xs) = getAllFolders xs
         file structure.
 -}
 
+main :: IO ()
+main = do
+    putStrLn "File name:"
+    file <- getLine
+    input <- readFile file
+    let single = unwords (lines input)
+    let tokened = lexer single
+    let blockArray = makeBlocks tokened
+    let populatedArray = populateChildren blockArray [] [] -- Root Array
+    let allFiles = getAllFiles blockArray
+    let allFolders = getAllFolders blockArray
+    let endpointArray = endpoints populatedArray
+    let filePaths = stringPathAll endpointArray populatedArray
+    --putStrLn $ show filePaths
+    pathsToStruc filePaths 
+
+--keep len to len-1 and n at 0
+pathsToStruc::[Filepath] -> IO ()
+pathsToStruc [] = putStrLn "successfully created"
+pathsToStruc (x:xs) = do
+    putStrLn $ show $ fst x
+    createMe x
+    pathsToStruc xs 
+
+-- Determine if file or folder 
+createMe:: Filepath -> IO()
+createMe x = if isFile (snd x) then makeFile (fst x) else makeFolder (fst x)
+
+isFile:: Blocks -> Bool
+isFile (File x) = True
+isFile _ = False
+
+--make a fuction that  dtermine if it is a file or folder and creates it
+makeFile:: String -> IO()
+makeFile x  = do
+    createDirectoryIfMissing True $ takeDirectory x
+    writeFile x ""
+
+makeFolder:: String -> IO()
+makeFolder x = do
+    createDirectoryIfMissing True $ takeDirectory x
+    createDirectory x
+
 -- main :: IO ()
 -- main = do
 --     putStrLn "File name:"
 --     file <- getLine
 --     input <- readFile file
---     let single = unwords (lines input)
---     let tokened = lexer single
---     let blockArray = makeBlocks tokened
---     let populatedArray = populateChildren blockArray [] []
---     let allFiles = getAllFiles blockArray
---     let allFolders = getAllFolders blockArray
---     putStrLn (show populatedArray)
+--     putStrLn $ show $ determineRoot $ makeBlocks $lexer $ unwords $ lines input
+
+
+
+
+--- TODO: Covert the Array of Strings to a tuple wiht (String, Block)

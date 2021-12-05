@@ -1,0 +1,33 @@
+lexer (x:xs) | (isLower x) = scanSym [x] xs
+                             where  scanSym i "" = [Sym (i)] 
+                                    scanSym i (x:xs) | isAlphaNum x = scanSym (i ++ [x]) xs
+                                                     | otherwise = Sym (i) : lexer (x:xs)
+
+
+-- makeTree
+-- makeTree:: [Blocks] -> Ftree
+
+
+
+--evalF
+
+-- evalF (determineRoot x) ""
+-- evalF:: Blocks -> IO()
+-- evalF Root rn el
+
+
+-- makeFile:: String -> Block -> IO()
+-- makeFile s (File ch) = writeFile (s ++ "/" ++ (fst ch))
+-- makeFile s (Folder el) = createDirectory (s++ "/"++(snd $ snd $ fst el))
+
+
+--locateChildren
+locateChildren:: [Child] -> [Blocks]-> [Blocks]
+locateChildren [] blocka = []
+locateChildren (x:xs) blocka = (checkF x []): locateChildren xs blocka
+
+--checkF
+checkF:: Child -> [Blocks] -> Blocks
+checkF chi [] = error "There was no file or folder that match this child: Name: " ++ (fst chi) ++ " Var Name: " ++ (snd chi)
+checkF chi (Folder x: xs) = if ((fst $ snd $ snd x) == (fst chi) ) && (fst x) == (snd chi) then Folder x else checkF chi xs
+checkF chi (File x: xs) = if x == chi then File x else checkF chi xs
